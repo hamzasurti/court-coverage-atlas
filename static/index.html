@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="County-level court e-filing coverage, network, Tyler market, and certification intelligence.">
+  <title>Court Coverage Atlas</title>
+  <link rel="stylesheet" href="styles.css?v=20260608-4">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to coverage</a>
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true"><i data-lucide="map"></i></span>
+      <div>
+        <strong>Court Coverage Atlas</strong>
+        <span id="snapshot-label">Loading snapshot</span>
+      </div>
+    </div>
+
+    <nav class="view-tabs" aria-label="Coverage views">
+      <button class="view-tab is-active" type="button" data-view="map" aria-label="County map">
+        <i data-lucide="map"></i><span>Counties</span>
+      </button>
+      <button class="view-tab" type="button" data-view="courts" aria-label="Court index">
+        <i data-lucide="landmark"></i><span>Courts</span>
+      </button>
+    </nav>
+
+    <div class="header-actions">
+      <button class="icon-button" id="sources-button" type="button" title="Sources and methodology" aria-label="Sources and methodology">
+        <i data-lucide="book-open"></i>
+      </button>
+      <button class="icon-button" id="share-button" type="button" title="Copy share link" aria-label="Copy share link">
+        <i data-lucide="link"></i>
+      </button>
+    </div>
+  </header>
+
+  <section class="filterbar" aria-label="Coverage filters">
+    <div class="search-wrap">
+      <i data-lucide="search" aria-hidden="true"></i>
+      <input id="global-search" type="search" autocomplete="off" placeholder="County, court, or filing manager" aria-label="Search counties, courts, or filing managers">
+      <div id="search-results" class="search-results" hidden></div>
+    </div>
+
+    <label class="select-control">
+      <span>State</span>
+      <select id="state-filter" aria-label="Filter by state">
+        <option value="">All</option>
+      </select>
+    </label>
+
+    <label class="select-control">
+      <span>Filing</span>
+      <select id="availability-filter" aria-label="Filter by e-filing availability">
+        <option value="">All</option>
+        <option value="available">Available</option>
+        <option value="mixed">Mixed</option>
+        <option value="unavailable">Unavailable</option>
+        <option value="unmapped">Not county-mapped</option>
+      </select>
+    </label>
+
+    <label class="select-control">
+      <span>Market</span>
+      <select id="market-filter" aria-label="Filter by Tyler market status">
+        <option value="">All</option>
+        <option value="Open">Open</option>
+        <option value="Closed">Closed</option>
+        <option value="Upcoming">Upcoming</option>
+        <option value="Privately-Funded">Private</option>
+        <option value="none">No Tyler market</option>
+      </select>
+    </label>
+
+    <label class="select-control select-control-wide">
+      <span>Network</span>
+      <select id="network-filter" aria-label="Filter by e-filing network">
+        <option value="">All</option>
+      </select>
+    </label>
+
+    <button class="icon-button reset-button" id="reset-filters" type="button" title="Reset filters" aria-label="Reset filters">
+      <i data-lucide="rotate-ccw"></i>
+    </button>
+  </section>
+
+  <main id="main-content" class="workspace">
+    <section class="primary-pane">
+      <div id="map-view" class="view-panel is-active">
+        <div class="map-toolbar">
+          <div class="mode-switcher" role="group" aria-label="Map color mode">
+            <button class="mode-button is-active" type="button" data-mode="availability">E-filing</button>
+            <button class="mode-button" type="button" data-mode="tyler">Tyler</button>
+            <button class="mode-button" type="button" data-mode="market">Market access</button>
+            <button class="mode-button" type="button" data-mode="rollout">Rollout</button>
+          </div>
+          <div class="map-summary" id="map-summary">Loading counties</div>
+          <div class="zoom-controls" aria-label="Map zoom controls">
+            <button class="icon-button" id="zoom-in" type="button" title="Zoom in" aria-label="Zoom in"><i data-lucide="plus"></i></button>
+            <button class="icon-button" id="zoom-out" type="button" title="Zoom out" aria-label="Zoom out"><i data-lucide="minus"></i></button>
+            <button class="icon-button" id="zoom-reset" type="button" title="Reset map" aria-label="Reset map"><i data-lucide="maximize-2"></i></button>
+          </div>
+        </div>
+
+        <div class="map-stage" id="map-stage">
+          <svg id="county-map" viewBox="0 0 1000 650" role="img" aria-labelledby="map-title map-description">
+            <title id="map-title">United States county court coverage</title>
+            <desc id="map-description">Interactive map of all Census counties and county equivalents, including territorial insets.</desc>
+          </svg>
+          <div id="map-tooltip" class="map-tooltip" hidden></div>
+          <div id="map-legend" class="map-legend" aria-label="Map legend"></div>
+        </div>
+      </div>
+
+      <div id="courts-view" class="view-panel">
+        <div class="court-toolbar">
+          <div>
+            <strong id="court-result-count">0 courts</strong>
+            <span id="court-result-context">All uploaded records</span>
+          </div>
+          <label class="select-control">
+            <span>Scope</span>
+            <select id="scope-filter" aria-label="Filter courts by geographic scope">
+              <option value="">All</option>
+              <option value="county-linked">County-linked</option>
+              <option value="state-record-unresolved">Unresolved local</option>
+              <option value="appellate-or-statewide">Appellate/statewide</option>
+              <option value="federal">Federal</option>
+            </select>
+          </label>
+        </div>
+        <div class="court-table-wrap">
+          <table class="court-table">
+            <thead>
+              <tr>
+                <th>Court</th>
+                <th>State</th>
+                <th>E-filing</th>
+                <th>Manager</th>
+                <th>Scope</th>
+              </tr>
+            </thead>
+            <tbody id="court-table-body"></tbody>
+          </table>
+        </div>
+        <div class="pagination">
+          <button class="text-button" id="previous-page" type="button"><i data-lucide="chevron-left"></i>Previous</button>
+          <span id="page-label">Page 1</span>
+          <button class="text-button" id="next-page" type="button">Next<i data-lucide="chevron-right"></i></button>
+        </div>
+      </div>
+    </section>
+
+    <aside class="detail-pane" id="detail-pane" aria-live="polite">
+      <div class="loading-state">
+        <span class="loading-line"></span>
+        <span class="loading-line short"></span>
+        <span class="loading-block"></span>
+      </div>
+    </aside>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="vendor/d3.min.js"></script>
+  <script src="vendor/lucide.min.js"></script>
+  <script src="app.js?v=20260608-4"></script>
+</body>
+</html>
