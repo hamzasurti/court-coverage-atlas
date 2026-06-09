@@ -3,7 +3,11 @@
 A shareable, read-only county and court coverage application built with Rust
 and Axum.
 
-Live site: `https://hamzasurti.github.io/court-coverage-atlas/`
+Live site: `http://hamzasurti.com/court-coverage-atlas/`
+
+The GitHub account's existing `hamzasurti.com` Pages domain currently has an
+invalid HTTPS certificate. The atlas deploy is healthy over HTTP; HTTPS depends
+on repairing that account-level custom-domain certificate.
 
 ## Data model
 
